@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aula Abierta · Reserva de Talleres</title>
+  <style>
+    /* =========================================================
+       Diseño Mobile-First (Base: 360px / 1 columna)
+       Punto de corte escritorio: @media (min-width: 48rem) [768px]
+       ========================================================= */
+    :root {
+      --color-fondo: #f4f6f8;
+      --color-superficie: #ffffff;
+      --color-texto: #1e293b;
+      --color-texto-suave: #475569;
+      --color-primario: #0f4c81;
+      --color-primario-hover: #0a365c;
+      --color-peligro: #b91c1c;
+      --color-peligro-fondo: #fef2f2;
+      --color-exito: #15803d;
+      --color-exito-fondo: #f0fdf4;
+      --color-borde: #cbd5e1;
+      --radio: 0.5rem;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--color-texto);
+      background-color: var(--color-fondo);
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 64rem;
+      margin-inline: auto;
+      padding-inline: 1rem;
+    }
+
+    /* Utilidad de accesibilidad para lectores de pantalla */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Cabecera */
+    .site-header {
+      background-color: var(--color-primario);
+      color: #ffffff;
+      padding-block: 1rem;
+    }
+
+    .marca {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 1.125rem;
+    }
+
+    .subtitulo {
+      margin: 0.15rem 0 0;
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    /* Contenido principal */
+    main {
+      padding-block: 1.5rem 2.5rem;
+    }
+
+    h1 {
+      margin: 0 0 1.25rem;
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      margin: 0.5rem 0;
+      font-size: 1.25rem;
+    }
+
+    /* Distribución base: 1 sola columna para móvil (evita desborde horizontal) */
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    /* Tarjetas */
+    .tarjeta {
+      background-color: var(--color-superficie);
+      border: 1px solid var(--color-borde);
+      border-radius: var(--radio);
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .etiqueta-estado {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .etiqueta-estado.reservado {
+      background-color: var(--color-exito-fondo);
+      color: var(--color-exito);
+    }
+
+    .descripcion {
+      color: var(--color-texto-suave);
+      margin-block: 0.75rem 1rem;
+    }
+
+    /* Listas de definición (<dl>) */
+    .metadatos-taller,
+    .resumen-reserva {
+      margin: 0 0 1.25rem;
+      display: grid;
+      gap: 0.65rem;
+      padding: 0.85rem;
+      background-color: var(--color-fondo);
+      border-radius: calc(var(--radio) - 2px);
+    }
+
+    .dato-item dt {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--color-texto-suave);
+    }
+
+    .dato-item dd {
+      margin: 0.1rem 0 0;
+      font-weight: 500;
+    }
+
+    /* Región de estado accesible */
+    .estado-texto {
+      margin: 0 0 1rem;
+      padding: 0.75rem;
+      border-radius: calc(var(--radio) - 2px);
+      background-color: var(--color-fondo);
+      border-left: 4px solid var(--color-borde);
+      font-weight: 500;
+    }
+
+    .estado-texto.confirmada {
+      background-color: var(--color-exito-fondo);
+      border-left-color: var(--color-exito);
+      color: var(--color-exito);
+    }
+
+    .estado-texto.cancelada {
+      background-color: var(--color-peligro-fondo);
+      border-left-color: var(--color-peligro);
+      color: var(--color-peligro);
+    }
+
+    /* Botones nativos y foco visible */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 2.75rem;
+      padding: 0.65rem 1.25rem;
+      font: inherit;
+      font-weight: 600;
+      border-radius: var(--radio);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid #f59e0b;
+      outline-offset: 2px;
+    }
+
+    .btn-primario {
+      background-color: var(--color-primario);
+      color: #ffffff;
+    }
+
+    .btn-primario:hover:not(:disabled) {
+      background-color: var(--color-primario-hover);
+    }
+
+    .btn-primario:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+
+    .btn-secundario {
+      background-color: #ffffff;
+      color: var(--color-peligro);
+      border-color: var(--color-peligro);
+    }
+
+    .btn-secundario:hover {
+      background-color: var(--color-peligro-fondo);
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--color-borde);
+      padding-block: 1rem;
+      color: var(--color-texto-suave);
+    }
+
+    /* =========================================================
+       Breakpoint Escritorio / Tablet: 48rem (768px)
+       Activa 2 columnas manteniendo intacto el orden del DOM
+       ========================================================= */
+    @media (min-width: 48rem) {
+      .contenedor {
+        padding-inline: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.85rem;
+      }
+
+      .layout-principal {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: 1.5rem;
+      }
+
+      .btn {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="contenedor">
+      <p class="marca">AULA ABIERTA</p>
+      <p class="subtitulo">Plataforma de talleres prácticos · FISEI</p>
+    </div>
+  </header>
+
+  <main class="contenedor">
+    <h1>Elige tu taller</h1>
+
+    <div class="layout-principal">
+      <!-- Columna 1: Catálogo / Detalle del taller -->
+      <section aria-labelledby="titulo-catalogo">
+        <h2 id="titulo-catalogo" class="sr-only">Talleres disponibles</h2>
+
+        <article class="tarjeta taller-card">
+          <div class="tarjeta-cabecera">
+            <span class="etiqueta-estado" id="badge-cupo">Cupos disponibles</span>
+            <h3>Interfaces web accesibles</h3>
+          </div>
+
+          <p class="descripcion">
+            Taller práctico sobre jerarquía semántica en HTML5, diseño adaptable Mobile-First y navegación por teclado.
+          </p>
+
+          <dl class="metadatos-taller">
+            <div class="dato-item">
+              <dt>Día y horario</dt>
+              <dd>Jueves · 14:00 a 16:00</dd>
+            </div>
+            <div class="dato-item">
+              <dt>Ubicación</dt>
+              <dd>Laboratorio 2 · Edificio Sistemas</dd>
+            </div>
+            <div class="dato-item">
+              <dt>Modalidad</dt>
+              <dd>Presencial (120 min)</dd>
+            </div>
+          </dl>
+
+          <div class="acciones">
+            <button type="button" id="btn-reservar" class="btn btn-primario">
+              Reservar un lugar
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Columna 2: Panel de estado de reserva -->
+      <aside class="tarjeta panel-reserva" aria-labelledby="titulo-reserva">
+        <h2 id="titulo-reserva">Mi reserva</h2>
+
+        <p id="mensaje-estado" role="status" aria-live="polite" class="estado-texto">
+          Aún no tienes una reserva activa.
+        </p>
+
+        <dl id="detalle-reserva" class="resumen-reserva" hidden>
+          <div class="dato-item">
+            <dt>Taller seleccionado</dt>
+            <dd>Interfaces web accesibles</dd>
+          </div>
+          <div class="dato-item">
+            <dt>Horario</dt>
+            <dd>Jueves · 14:00 a 16:00</dd>
+          </div>
+          <div class="dato-item">
+            <dt>Aula</dt>
+            <dd>Laboratorio 2</dd>
+          </div>
+        </dl>
+
+        <div class="acciones">
+          <button type="button" id="btn-cancelar" class="btn btn-secundario" hidden>
+            Cancelar reserva
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="contenedor">
+      <small>Prototipo funcional adaptable · Interacción Humano-Computador</small>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * Controlador de estados de reserva accesible por teclado
+     * Ciclo: Disponible -> Confirmada -> Cancelada
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnReservar = document.getElementById("btn-reservar");
+      const btnCancelar = document.getElementById("btn-cancelar");
+      const mensajeEstado = document.getElementById("mensaje-estado");
+      const detalleReserva = document.getElementById("detalle-reserva");
+      const badgeCupo = document.getElementById("badge-cupo");
+
+      // Estado: Confirmada
+      btnReservar.addEventListener("click", () => {
+        btnReservar.disabled = true;
+        btnReservar.textContent = "Lugar reservado";
+
+        badgeCupo.textContent = "Inscrito";
+        badgeCupo.classList.add("reservado");
+
+        mensajeEstado.textContent = "Reserva confirmada para Interfaces web accesibles.";
+        mensajeEstado.className = "estado-texto confirmada";
+
+        detalleReserva.hidden = false;
+        btnCancelar.hidden = false;
+
+        // Traslada el foco automáticamente al botón disponible para continuidad con teclado
+        btnCancelar.focus();
+      });
+
+      // Estado: Cancelada (vuelve a habilitar disponibilidad)
+      btnCancelar.addEventListener("click", () => {
+        btnReservar.disabled = false;
+        btnReservar.textContent = "Reservar un lugar";
+
+        badgeCupo.textContent = "Cupos disponibles";
+        badgeCupo.classList.remove("reservado");
+
+        mensajeEstado.textContent = "Has cancelado tu reserva. El cupo vuelve a estar disponible.";
+        mensajeEstado.className = "estado-texto cancelada";
+
+        detalleReserva.hidden = true;
+        btnCancelar.hidden = true;
+
+        // Devuelve el foco automáticamente al botón principal disponible
+        btnReservar.focus();
+      });
+    });
+  </script>
+</body>
+</html>
